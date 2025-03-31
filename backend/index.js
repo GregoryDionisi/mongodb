@@ -32,7 +32,7 @@ startServer();
 
 
 // get all data
-app.get('/utenti', async () => { //"users" è il nome della collezione del db
+app.get('/utenti', async (req, res) => { //"users" è il nome della collezione del db
     if (!database){
         return res.status(500).json({message: 'Database is not connected'});
     }
