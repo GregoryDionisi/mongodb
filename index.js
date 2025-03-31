@@ -76,19 +76,17 @@ app.post('/utente/:username', async(req, res) => {
         return res.status(500).json({message: 'Database is not connected'});
     }
     try{
-        const {id, nome, cognome, username, email, password} = req.body //spacchettare nei vari campi
-        const result = await database.collection('users').insertOne({
-            id,
-            nome,
-            cognome,
-            username, 
-            email,
-            password
-        })
-        res.status(201).json({message: 'Utente creato'}); //201 richiesta accettata per aver inserito una nuova risorsa
+        const usernameDaEliminare = req.params.username;
+        const result = database.collection('users').deleteOne(
+            {user: usernameDaEliminare}
+        )
+        if (result.deletedCount === 0){
+            return res.status(404).json({message: 'Utente non trovato'}); //per verificare se l'utente che si vuole eliminare esiste veramente
+        }
+        res.status(200).json({message: 'Utente eliminato'});
     }catch(err){
         console.log(err);
-        res.status(500).json({message: 'Error creating utente'});
+        res.status(500).json({message: 'Error deleting utente'});
     }
 })
 
