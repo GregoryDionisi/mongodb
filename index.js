@@ -32,7 +32,7 @@ startServer();
 
 
 // get all data
-app.get('/users', async () => { //"users" è il nome della collezione del db
+app.get('/utenti', async () => { //"users" è il nome della collezione del db
     if (!database){
         return res.status(500).json({message: 'Database is not connected'});
     }
@@ -44,3 +44,52 @@ app.get('/users', async () => { //"users" è il nome della collezione del db
         res.status(500).json({message: 'Error get users'});
     }
 })
+
+
+// post utente
+app.post('/utente', async(req, res) => {
+    if (!database){
+        return res.status(500).json({message: 'Database is not connected'});
+    }
+    try{
+        const {id, nome, cognome, username, email, password} = req.body //spacchettare nei vari campi
+        const result = await database.collection('users').insertOne({
+            id,
+            nome,
+            cognome,
+            username, 
+            email,
+            password
+        })
+        res.status(201).json({message: 'Utente creato'}); //201 richiesta accettata per aver inserito una nuova risorsa
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message: 'Error creating utente'});
+    }
+})
+
+
+
+// delete utente
+app.post('/utente/:username', async(req, res) => {
+    if (!database){
+        return res.status(500).json({message: 'Database is not connected'});
+    }
+    try{
+        const {id, nome, cognome, username, email, password} = req.body //spacchettare nei vari campi
+        const result = await database.collection('users').insertOne({
+            id,
+            nome,
+            cognome,
+            username, 
+            email,
+            password
+        })
+        res.status(201).json({message: 'Utente creato'}); //201 richiesta accettata per aver inserito una nuova risorsa
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message: 'Error creating utente'});
+    }
+})
+
+// indirizzo: http://localhost:3000/utenti
