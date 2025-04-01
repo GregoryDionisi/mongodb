@@ -134,4 +134,27 @@ app.get('/utente/:username', async(req, res) => {
     }
 })
 
+
+// get query string
+/* app.get('/utenti/search', async(req, res) => {
+    if (!database){
+        return res.status(500).json({message: 'Database is not connected'});
+    }
+    try{
+        const {nome, cognome} = req.query;
+        console.log(nome, cognome);
+        const result = await database.collection('users').find({
+                nome: nome,
+                cognome: cognome
+            }).toArray 
+        if (!result){
+            return res.status(404).json({message: 'Utente non trovato'}); //per verificare se l'utente che si vuole modificare esiste veramente
+        }
+        res.status(200).json(result);
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message: 'Error getting utente'});
+    }
+})
+ */
 // indirizzo: http://localhost:3000/utenti
