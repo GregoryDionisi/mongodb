@@ -77,7 +77,7 @@ app.post('/utente/:username', async(req, res) => {
     }
     try{
         const usernameDaEliminare = req.params.username;
-        const result = database.collection('users').deleteOne(
+        const result = await database.collection('users').deleteOne(
             {user: usernameDaEliminare}
         )
         if (result.deletedCount === 0){ //deletedCount è il numero di oggetti eliminati
@@ -110,6 +110,27 @@ app.put('/utente/:username', async(req, res) => {
     }catch(err){
         console.log(err);
         res.status(500).json({message: 'Error updating utente'});
+    }
+})
+
+
+// get utente by id
+app.get('/utente/:username', async(req, res) => {
+    if (!database){
+        return res.status(500).json({message: 'Database is not connected'});
+    }
+    try{
+        const usernameDaVisualizzare = req.params.username;
+        const result = await database.collection('users').findOne(
+            {username: usernameDaVisualizzare}
+        ) 
+        if (!result){
+            return res.status(404).json({message: 'Utente non trovato'}); //per verificare se l'utente che si vuole modificare esiste veramente
+        }
+        res.status(200).json(result);
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message: 'Error getting utente'});
     }
 })
 
