@@ -78,7 +78,7 @@ app.post('/utente/:username', async(req, res) => {
     try{
         const usernameDaEliminare = req.params.username;
         const result = await database.collection('users').deleteOne(
-            {user: usernameDaEliminare}
+            {username: usernameDaEliminare}
         )
         if (result.deletedCount === 0){ //deletedCount è il numero di oggetti eliminati
             return res.status(404).json({message: 'Utente non trovato'}); //per verificare se l'utente che si vuole eliminare esiste veramente
