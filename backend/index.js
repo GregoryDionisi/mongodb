@@ -80,13 +80,36 @@ app.post('/utente/:username', async(req, res) => {
         const result = database.collection('users').deleteOne(
             {user: usernameDaEliminare}
         )
-        if (result.deletedCount === 0){
+        if (result.deletedCount === 0){ //deletedCount è il numero di oggetti eliminati
             return res.status(404).json({message: 'Utente non trovato'}); //per verificare se l'utente che si vuole eliminare esiste veramente
         }
         res.status(200).json({message: 'Utente eliminato'});
     }catch(err){
         console.log(err);
         res.status(500).json({message: 'Error deleting utente'});
+    }
+})
+
+
+// update utente
+app.put('/utente/:username', async(req, res) => {
+    if (!database){
+        return res.status(500).json({message: 'Database is not connected'});
+    }
+    try{
+        const usernameDaModificare = req.params.username;
+        const updateData = req.body;
+        const result = await database.collection('users').updateOne(
+            {username: usernameDaModificare},
+            {$set: updateData} //$set aggiorna solo i campi specifici. Update data contiene il corpo della richiesta
+        )
+        if (result.matchedCount === 0){ //matchedCount è il numero di modifiche
+            return res.status(404).json({message: 'Utente non trovato'}); //per verificare se l'utente che si vuole modificare esiste veramente
+        }
+        res.status(200).json({message: 'Utente modificato'})
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message: 'Error updating utente'});
     }
 })
 
