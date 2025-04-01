@@ -52,14 +52,16 @@ app.post('/utente', async(req, res) => {
         return res.status(500).json({message: 'Database is not connected'});
     }
     try{
-        const {id, nome, cognome, username, email, password} = req.body //spacchettare nei vari campi
+        const {id, nome, cognome, username, email, password, citta, dataRegistrazione} = req.body //spacchettare nei vari campi
         const result = await database.collection('users').insertOne({
             id,
             nome,
             cognome,
             username, 
             email,
-            password
+            password,
+            citta,
+            dataRegistrazione
         })
         res.status(201).json({message: 'Utente creato'}); //201 richiesta accettata per aver inserito una nuova risorsa
     }catch(err){
@@ -136,25 +138,50 @@ app.get('/utente/:username', async(req, res) => {
 
 
 // get query string
-/* app.get('/utenti/search', async(req, res) => {
-    if (!database){
-        return res.status(500).json({message: 'Database is not connected'});
+app.get('/utenti/search', async (req, res) => {
+    if (!database) {
+        return res.status(500).json({ message: 'Database is not connected' });
     }
-    try{
-        const {nome, cognome} = req.query;
-        console.log(nome, cognome);
-        const result = await database.collection('users').find({
-                nome: nome,
-                cognome: cognome
-            }).toArray 
-        if (!result){
-            return res.status(404).json({message: 'Utente non trovato'}); //per verificare se l'utente che si vuole modificare esiste veramente
+    try {
+        const { nome, citta, cognome, dataInizio, dataFine, ordine } = req.query;
+        let query = {};
+    
+        if (nome) {
+            query.nome = nome;
         }
+        
+        if (citta) {
+            query.citta = citta;
+        }
+        
+        if (dataInizio && dataFine) {
+            query.dataRegistrazione = {
+                $gte: dataInizio,
+                $lte: dataFine
+            };
+        }
+        
+        let queryResult = database.collection('users').find(query);
+        
+        if (cognome) {
+            if (ordine === 'desc') {
+                queryResult = queryResult.sort({ cognome: -1 }); 
+            } else {
+                queryResult = queryResult.sort({ cognome: 1 });
+            }
+        }
+        const result = await queryResult.toArray();
+        
+        if (!result.length) {
+            return res.status(404).json({ message: 'Nessun utente trovato' });
+        }
+        
         res.status(200).json(result);
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        res.status(500).json({message: 'Error getting utente'});
+        res.status(500).json({ message: 'Error getting utenti' });
     }
-})
- */
+});
+
+
 // indirizzo: http://localhost:3000/utenti
